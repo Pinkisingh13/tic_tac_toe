@@ -17,7 +17,10 @@ A fun and interactive Tic Tac Toe game built with Flutter, featuring a sleek use
 6. Error Handling: Provides feedback for invalid moves with a vibration and a snack bar notification.
 
 ## Screenshot
-
+<div align = "center">
+  <img src="assets/images/tic-tac-toe-image1.jpg" alt="Tic Tac Toe Screenshot 1" width="45%" style="margin-right: 10px;">
+  <img src="assets/images/tic-tac-toe-image2.jpg" alt="Tic Tac Toe Screenshot 2" width="45%">
+</div>
 
 ##  Installation
    * Prerequisits
@@ -44,7 +47,7 @@ A fun and interactive Tic Tac Toe game built with Flutter, featuring a sleek use
   * Feel free to contribute to this project by opening issues or submitting pull requests. Let's make this app even better together!
 ### Contact
   * Email: <web.pinkisingh@gmail.com>
-  * Linkdin: <https://www.linkedin.com/in/pinkisingh23/>
+  * Linkedin: <https://www.linkedin.com/in/pinkisingh23/>
   * medium: <https://medium.com/@web.pinkisingh>
 
 
