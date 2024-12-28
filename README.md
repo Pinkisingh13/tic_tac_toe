@@ -20,11 +20,31 @@ A fun and interactive Tic Tac Toe game built with Flutter, featuring a sleek use
 
 
 ##  Installation
-### Prerequisits
-    1. Flutter SDK installed on your machine.
-    2. A code editor like VSCode or Android Studio.
+   * Prerequisits
+      1. Flutter SDK installed on your machine.
+      2. A code editor like VSCode or Android Studio.
+    
+   * Clone the repository: 
+     ``` bash
+     git clone https://github.com/Pinkisingh13/tic-tac-toe.git
 
-### clone the repository:
-  https://github.com/Pinkisingh13/tic_tac_toe.git
+   * Navigate to the project directory:
+     ```bash
+     cd tic-tac-toe
+   * Get the dependencies:
+     ``` bash
+     flutter pub get
+   * Run the app
+     ``` bash
+     flutter run
+### Technologies Used
+  * Flutter: Framework for building the app.
+  * Dart: Programming language for Flutter.
+### Contributing
+  * Feel free to contribute to this project by opening issues or submitting pull requests. Let's make this app even better together!
+### Contact
+  * Email: <web.pinkisingh@gmail.com>
+  * Linkdin: <https://www.linkedin.com/in/pinkisingh23/>
+  * medium: <https://medium.com/@web.pinkisingh>
 
 
