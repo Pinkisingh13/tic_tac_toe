@@ -1,8 +1,8 @@
 
-
+//Import necessary packages
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:neon_widgets/neon_widgets.dart';
+import 'package:neon_widgets/neon_widgets.dart'; 
 
 void main() {
   runApp(const MyApp());
@@ -28,15 +28,18 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage>
-    with SingleTickerProviderStateMixin {
-  List<List<String>> board = List.generate(3, (_) => List.filled(3, ""));
-  bool isXTurn = true;
-  String winner = '';
-  String playerName = 'X';
-  int player1 = 0;
-  int player2 = 0;
-  List<int> winIndex = [];
+     {
 
+  // 2D List to represent the board 
+  List<List<String>> board = List.generate(3, (_) => List.filled(3, ""));
+  bool isXTurn = true;// Tracks whose turn it is (X or O)
+  String winner = ''; // Stores the winner ('X', 'O', 'Draw')
+  int player1 = 0; // Player X score
+  int player2 = 0; // Player O score
+  List<int> winIndex = []; // Stores winning indices for highlighting
+
+
+// Reset the game board and States
   void resetGame() {
     setState(() {
       board = List.generate(3, (_) => List.filled(3, ""));
@@ -47,21 +50,23 @@ class _HomePageState extends State<HomePage>
     });
   }
 
+// Handles user taps on the board
   void handleTap(int row, int column) async {
-    print(board);
-    print("Clicked!!!");
     if (board[row][column] == '' && winner == '') {
+
+      //valid move
       setState(() {
-        board[row][column] = isXTurn ? 'X' : 'O';
-        playerName = 'X';
-        isXTurn = !isXTurn;
-        checkWinner();
-        score();
+        board[row][column] = isXTurn ? 'X' : 'O'; //update board with 'X' or 'O'
+        isXTurn = !isXTurn; // switch player turn
+        checkWinner(); // check for winner
+        score(); // update score
       });
     } else {
-      print("vibration");
+      // Invalid Move
 
-      HapticFeedback.vibrate();
+      HapticFeedback.vibrate(); // Provide haptic feedback
+
+      // Show a SnackBar for invalid move
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(
           "Invalid Move!",
@@ -77,9 +82,13 @@ class _HomePageState extends State<HomePage>
     }
   }
 
+
+// Check for the winner
   void checkWinner() {
     winIndex.clear();
     for (var i = 0; i < 3; i++) {
+
+      //rows
       if (board[i][0] != '' &&
           board[i][0] == board[i][1] &&
           board[i][1] == board[i][2]) {
@@ -87,6 +96,7 @@ class _HomePageState extends State<HomePage>
         winner = board[i][0];
         return;
       }
+      //columns
       if (board[0][i] != '' &&
           board[0][i] == board[1][i] &&
           board[1][i] == board[2][i]) {
@@ -94,7 +104,7 @@ class _HomePageState extends State<HomePage>
         winner = board[0][i];
         return;
       }
-//diagonals
+      //diagonals
       if (board[0][0] != '' &&
           board[0][0] == board[1][1] &&
           board[1][1] == board[2][2]) {
@@ -102,6 +112,7 @@ class _HomePageState extends State<HomePage>
         winner = board[0][0];
         return;
       }
+      //diagonals
       if (board[0][2] != '' &&
           board[0][2] == board[1][1] &&
           board[1][1] == board[2][0]) {
@@ -118,6 +129,7 @@ class _HomePageState extends State<HomePage>
     }
   }
 
+// Update the score based on the winner
   void score() {
     if (winner == 'X') {
       setState(() {
@@ -163,7 +175,7 @@ class _HomePageState extends State<HomePage>
         children: [
           winner.isEmpty
               ? Text(
-                  isXTurn ? "$playerName Turn!" : "O Turn!",
+                  isXTurn ? "X Turn!" : "O Turn!",
                   style: TextStyle(
                     fontFamily: 'PressStart2P',
                     fontSize: 20,
@@ -181,6 +193,7 @@ class _HomePageState extends State<HomePage>
                   ),
                 ),
           SizedBox(height: 40),
+          // Game Board
           AspectRatio(
             aspectRatio: 0.80,
             child: GridView.builder(
@@ -191,19 +204,17 @@ class _HomePageState extends State<HomePage>
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 3),
                 itemBuilder: (context, index) {
-                  int row = index ~/ 3;
-                  int column = index % 3;
+                  int row = index ~/ 3; // determine row index
+                  int column = index % 3; // determine column index
                   return GestureDetector(
-                    onTap: () => handleTap(row, column),
+                    onTap: () => handleTap(row, column), // handle user tap
                     child: NeonContainer(
                       lightBlurRadius: 10,
                       lightSpreadRadius: 1,
                       borderWidth: 5,
-                      // lightSpreadRadius: 0,
-
                       borderColor: Color.fromARGB(255, 132, 247, 255),
                       borderRadius: BorderRadius.circular(14),
-                      containerColor: winIndex.contains(index)
+                      containerColor: winIndex.contains(index) // Highlight winning cells
                           ? const Color.fromARGB(255, 0, 127, 4)
                           : Color.fromARGB(255, 0, 32, 88),
 
@@ -220,6 +231,8 @@ class _HomePageState extends State<HomePage>
                   );
                 }),
           ),
+
+          // Display Scores for Player X and Player O
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
