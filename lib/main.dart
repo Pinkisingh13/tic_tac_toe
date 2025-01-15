@@ -1,8 +1,7 @@
-
 //Import necessary packages
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:neon_widgets/neon_widgets.dart'; 
+import 'package:neon_widgets/neon_widgets.dart';
 
 void main() {
   runApp(const MyApp());
@@ -27,17 +26,14 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage>
-     {
-
-  // 2D List to represent the board 
+class _HomePageState extends State<HomePage> {
+  // 2D List to represent the board
   List<List<String>> board = List.generate(3, (_) => List.filled(3, ""));
-  bool isXTurn = true;// Tracks whose turn it is (X or O)
+  bool isXTurn = true; // Tracks whose turn it is (X or O)
   String winner = ''; // Stores the winner ('X', 'O', 'Draw')
   int player1 = 0; // Player X score
   int player2 = 0; // Player O score
   List<int> winIndex = []; // Stores winning indices for highlighting
-
 
 // Reset the game board and States
   void resetGame() {
@@ -53,7 +49,6 @@ class _HomePageState extends State<HomePage>
 // Handles user taps on the board
   void handleTap(int row, int column) async {
     if (board[row][column] == '' && winner == '') {
-
       //valid move
       setState(() {
         board[row][column] = isXTurn ? 'X' : 'O'; //update board with 'X' or 'O'
@@ -67,27 +62,36 @@ class _HomePageState extends State<HomePage>
       HapticFeedback.vibrate(); // Provide haptic feedback
 
       // Show a SnackBar for invalid move
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(
-          "Invalid Move!",
-          style: TextStyle(
-              color: const Color.fromARGB(255, 157, 10, 0),
-              fontSize: 20,
-              fontWeight: FontWeight.bold),
+      showMySnackBar(MediaQuery.of(context).size.width);
+    }
+  }
+
+  void showMySnackBar(double width) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        elevation: 0,
+        width: width > 600 ? width*0.30 : 200,
+        content: Container(
+          // width: width > 600 ? width*0.30 : 200,
+          child: Text(
+            "Invalid Move!",
+            style: TextStyle(
+                color: const Color.fromARGB(255, 157, 10, 0),
+                fontSize: 20,
+                fontWeight: FontWeight.bold),
+          ),
         ),
         duration: Duration(seconds: 2),
         backgroundColor: Color.fromARGB(255, 255, 188, 188),
         behavior: SnackBarBehavior.floating,
-      ));
-    }
+      ),
+    );
   }
-
 
 // Check for the winner
   void checkWinner() {
     winIndex.clear();
     for (var i = 0; i < 3; i++) {
-
       //rows
       if (board[i][0] != '' &&
           board[i][0] == board[i][1] &&
@@ -149,26 +153,45 @@ class _HomePageState extends State<HomePage>
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 0, 32, 88),
         title: Text(
           'Tic Tac Toe',
           style: TextStyle(
-            fontFamily: 'PressStart2P',
+              fontFamily: 'PressStart2P',
               color: Color(0xFFC9F9FC),
               fontSize: 16,
               fontWeight: FontWeight.bold),
         ),
-        actions: [
-          IconButton(
-            onPressed: resetGame,
-            icon: Icon(
-              Icons.refresh,
-              color: Color(0xFFC9F9FC),
-            ),
-          )
-        ],
+        actions: width > 600
+            ? [
+                Padding(
+                  padding: EdgeInsets.only(right: width * 0.10),
+                  child: ElevatedButton(
+                    onPressed: resetGame,
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Color(0xFF002058),
+                      textStyle: TextStyle(
+                        fontFamily: 'PressStart2P',
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    child: Text("Reset"),
+                  ),
+                ),
+              ]
+            : [
+                IconButton(
+                  onPressed: resetGame,
+                  icon: Icon(
+                    Icons.refresh,
+                    color: Color(0xFFC9F9FC),
+                  ),
+                )
+              ],
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -194,43 +217,24 @@ class _HomePageState extends State<HomePage>
                 ),
           SizedBox(height: 40),
           // Game Board
-          AspectRatio(
-            aspectRatio: 0.80,
-            child: GridView.builder(
-                physics: NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: 9,
-                padding: EdgeInsets.only(left: 10, right: 10),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3),
-                itemBuilder: (context, index) {
-                  int row = index ~/ 3; // determine row index
-                  int column = index % 3; // determine column index
-                  return GestureDetector(
-                    onTap: () => handleTap(row, column), // handle user tap
-                    child: NeonContainer(
-                      lightBlurRadius: 10,
-                      lightSpreadRadius: 1,
-                      borderWidth: 5,
-                      borderColor: Color.fromARGB(255, 132, 247, 255),
-                      borderRadius: BorderRadius.circular(14),
-                      containerColor: winIndex.contains(index) // Highlight winning cells
-                          ? const Color.fromARGB(255, 0, 127, 4)
-                          : Color.fromARGB(255, 0, 32, 88),
-
-                      child: Center(
-                        child: Text(
-                          board[row][column],
-                          style: TextStyle(
-                              fontSize: 46,
-                              color: Color(0XFFFCD015),
-                              fontWeight: FontWeight.w900),
-                        ),
-                      ),
-                    ),
-                  );
-                }),
-          ),
+          width > 600
+              ? SizedBox(
+                  width: 400,
+                  height: 400,
+                  child: BoardUi(
+                    board: board,
+                    winIndex: winIndex,
+                    handleTap: handleTap,
+                  ),
+                )
+              : AspectRatio(
+                  aspectRatio: 0.80,
+                  child: BoardUi(
+                    board: board,
+                    winIndex: winIndex,
+                    handleTap: handleTap,
+                  ),
+                ),
 
           // Display Scores for Player X and Player O
           Row(
@@ -275,6 +279,56 @@ class _HomePageState extends State<HomePage>
           ),
         ],
       ),
+    );
+  }
+}
+
+class BoardUi extends StatelessWidget {
+  final List<List<String>> board;
+  final List<int> winIndex;
+  final Function handleTap;
+
+  const BoardUi(
+      {super.key,
+      required this.board,
+      required this.winIndex,
+      required this.handleTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GridView.builder(
+      physics: NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      itemCount: 9,
+      padding: EdgeInsets.only(left: 10, right: 10),
+      gridDelegate:
+          SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
+      itemBuilder: (context, index) {
+        int row = index ~/ 3; // determine row index
+        int column = index % 3; // determine column index
+        return GestureDetector(
+          onTap: () => handleTap(row, column), // handle user tap
+          child: NeonContainer(
+            lightBlurRadius: 10,
+            lightSpreadRadius: 1,
+            borderWidth: 5,
+            borderColor: Color.fromARGB(255, 132, 247, 255),
+            borderRadius: BorderRadius.circular(14),
+            containerColor: winIndex.contains(index) // Highlight winning cells
+                ? const Color.fromARGB(255, 0, 127, 4)
+                : Color.fromARGB(255, 0, 32, 88),
+            child: Center(
+              child: Text(
+                board[row][column],
+                style: TextStyle(
+                    fontSize: 46,
+                    color: Color(0XFFFCD015),
+                    fontWeight: FontWeight.w900),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }
